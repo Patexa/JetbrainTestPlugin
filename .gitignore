@@ -1,0 +1,4 @@
+/TestPlugin
+/.idea
+*.nupkg
+.nuke/

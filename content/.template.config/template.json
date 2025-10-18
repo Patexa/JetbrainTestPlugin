@@ -1,0 +1,106 @@
+{
+    "$schema": "https://json.schemastore.org/template",
+    "author": "Matthias Koch",
+    "classifications": [ "jetbrains", "resharper", "rider" ],
+    "name": "ReSharper/Rider Plugin",
+    "identity": "JetBrains.ReSharper.SamplePlugin",
+    "shortName": "resharper-rider-plugin",
+    "tags": {
+        "type": "project",
+        "language": "C#",
+        "platform": ".NET",
+        "hasMultipleProjects": "true"
+    },
+    "sourceName": "SamplePlugin",
+    "preferNameDirectory" : true,
+    "primaryOutputs": [
+    ],
+    "symbols": {
+        "build-only":{
+            "type": "parameter",
+            "dataType":"bool",
+            "defaultValue": "false",
+            "description": "Only emit files related to build infrastructure."
+        },
+        "resharper-only":{
+            "type": "parameter",
+            "dataType":"bool",
+            "defaultValue": "false",
+            "description": "Only emit files relevant for ReSharper plugins (no Rider)."
+        },
+        "version":{
+            "type": "parameter",
+            "dataType":"string",
+            "defaultValue": "2023.1",
+            "replaces":"2023.1"
+        },
+        "github-actions":{
+            "type": "parameter",
+            "dataType":"bool",
+            "defaultValue": "false",
+            "description": "Include GitHub Actions workflow files."
+        },
+        "lowerCaseName":{
+            "type": "generated",
+            "generator": "casing",
+            "parameters": {
+                "source":"name",
+                "toLower": true
+            },
+            "fileRename": "sampleplugin"
+        }
+    },
+    "sources": [
+        {
+            "modifiers": [
+                {
+                    "condition": "(resharper-only)",
+                    "exclude": [
+                        ".idea/**/Rider*.xml",
+                        ".idea/**/rdgen*.xml",
+                        "gradle/**/*",
+                        "protocol/**/*",
+                        "src/dotnet/**/*.Rider.csproj",
+                        "src/rider/**/*",
+                        "build.gradle.kts",
+                        "gradle.properties",
+                        "gradlew",
+                        "gradlew.bat",
+                        "settings.gradle.kts"
+                    ]
+                },
+                {
+                    "condition": "(build-only)",
+                    "exclude": [
+                        ".gitattributes",
+                        ".gitignore",
+                        "CHANGELOG.md",
+                        "README.md",
+                        "ReSharperPlugin.SamplePlugin.sln",
+                        "src/dotnet/*/**/*",
+                        "src/dotnet/Plugin.props",
+                        "src/rider/main/resources/META-INF/plugin.xml"
+                    ]
+                },
+                {
+                    "condition": "(!github-actions)",
+                    "exclude": [
+                        ".github/workflows/*"
+                    ]
+                }
+            ]
+        }
+    ],
+    "postActions": [
+        {
+            "condition": "(OS != \"Windows_NT\" && !resharper-only)",
+            "description": "Make gradlew executable",
+            "manualInstructions": [ { "text": "Make gradlew executable" }  ],
+            "actionId": "cb9a6cf3-4f5c-4860-b9d2-03a574959774",
+            "args": {
+                "+x": "gradlew"
+            },
+            "continueOnError": true
+        }
+    ]
+}
